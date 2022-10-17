@@ -3,6 +3,15 @@
 # %% auto 0
 __all__ = ['stockDataPlots']
 
+# %% ../nbs/yFinance_restructureData.ipynb 5
+import numpy as np
+import pandas as pd
+
+from yfinance import *
+
+import os
+from pathlib import Path
+
 # %% ../nbs/yFinance_restructureData.ipynb 7
 class stockDataPlots:
     
