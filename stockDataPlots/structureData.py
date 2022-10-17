@@ -105,7 +105,7 @@ class stockDataPlots:
         incomeStatementTTM = incomeStatementQuarterlyOrdered.drop('Date', axis = 1).iloc[0:4, :].sum(axis = 0, min_count = 1, numeric_only = None)
         incomeStatementTTM = pd.DataFrame(incomeStatementTTM).T
         
-        incomeStatementTTM['Date'] = test.incomeStatementQuarterly['Date'][0]
+        incomeStatementTTM['Date'] = incomeStatementQuarterly['Date'][0]
         cols = incomeStatementTTM.columns.to_list()
         colsOrdered = cols[-1:] + cols[:-1]
         incomeStatementTTM = incomeStatementTTM[colsOrdered].set_index('Date', drop = False)
@@ -311,7 +311,7 @@ class stockDataPlots:
         cashflowTTM = cashflowQuarterlyOrdered.drop('Date', axis = 1).iloc[0:4, :].sum(axis = 0, min_count = 1, numeric_only = None)
         cashflowTTM = pd.DataFrame(cashflowTTM).T
         
-        cashflowTTM['Date'] = test.cashflowQuarterly['Date'][0]
+        cashflowTTM['Date'] = cashflowQuarterly['Date'][0]
         cols = cashflowTTM.columns.to_list()
         colsOrdered = cols[-1:] + cols[:-1]
         cashflowTTM = cashflowTTM[colsOrdered].set_index('Date', drop = False)
