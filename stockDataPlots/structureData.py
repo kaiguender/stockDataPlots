@@ -242,10 +242,6 @@ class stockDataPlots:
                                'Capital Expenditures',
                                'Free Cashflow',
                                'Free Cashflow Ratio',
-                               'Adjusted Operating Cashflow',
-                               'Adjusted Operating Cashflow Ratio',
-                               'Adjusted Free Cashflow',
-                               'Adjusted Free Cashflow Ratio',
                                'Net Income',
                                'Depreciation',
                                'Change To Account Receivables',
@@ -274,22 +270,14 @@ class stockDataPlots:
             
         #---
         
-        cashflow['Free Cashflow'] = cashflow['Total Cash From Operating Activities'] + cashflow['Capital Expenditures']
-        cashflow['Adjusted Operating Cashflow'] = cashflow['Net Income'] + cashflow['Depreciation']
         cashflow['Operating Cashflow Ratio'] = cashflow['Total Cash From Operating Activities'] / self.incomeStatement['Total Revenue']
-        cashflow['Adjusted Operating Cashflow Ratio'] = cashflow['Adjusted Operating Cashflow'] / self.incomeStatement['Total Revenue']
-        cashflow['Adjusted Free Cashflow'] = cashflow['Adjusted Operating Cashflow'] + cashflow['Capital Expenditures']
+        cashflow['Free Cashflow'] = cashflow['Total Cash From Operating Activities'] + cashflow['Capital Expenditures']
         cashflow['Free Cashflow Ratio'] = cashflow['Free Cashflow'] / self.incomeStatement['Total Revenue']
-        cashflow['Adjusted Free Cashflow Ratio'] = cashflow['Adjusted Free Cashflow'] / self.incomeStatement['Total Revenue']
         
-        cashflowQuarterly['Free Cashflow'] = cashflowQuarterly['Total Cash From Operating Activities'] + cashflowQuarterly['Capital Expenditures']
-        cashflowQuarterly['Adjusted Operating Cashflow'] = cashflowQuarterly['Net Income'] + cashflowQuarterly['Depreciation']
         cashflowQuarterly['Operating Cashflow Ratio'] = cashflowQuarterly['Total Cash From Operating Activities'] / self.incomeStatementQuarterly['Total Revenue']
-        cashflowQuarterly['Adjusted Operating Cashflow Ratio'] = cashflowQuarterly['Adjusted Operating Cashflow'] / self.incomeStatementQuarterly['Total Revenue']
-        cashflowQuarterly['Adjusted Free Cashflow'] = cashflowQuarterly['Adjusted Operating Cashflow'] + cashflowQuarterly['Capital Expenditures']
+        cashflowQuarterly['Free Cashflow'] = cashflowQuarterly['Total Cash From Operating Activities'] + cashflowQuarterly['Capital Expenditures']
         cashflowQuarterly['Free Cashflow Ratio'] = cashflowQuarterly['Free Cashflow'] / self.incomeStatementQuarterly['Total Revenue']
-        cashflowQuarterly['Adjusted Free Cashflow Ratio'] = cashflowQuarterly['Adjusted Free Cashflow'] / self.incomeStatementQuarterly['Total Revenue']
-        
+     
         #---
         
         cashflowOrdered = cashflow[cashflowColsOrdered]
@@ -318,9 +306,7 @@ class stockDataPlots:
         cashflowTTM.index.name = None
         
         cashflowTTM['Operating Cashflow Ratio'] = cashflowTTM['Operating Cashflow'] / self.incomeStatementTTM['Total Revenue']
-        cashflowTTM['Adjusted Operating Cashflow Ratio'] = cashflowTTM['Adjusted Operating Cashflow'] / self.incomeStatementTTM['Total Revenue']
         cashflowTTM['Free Cashflow Ratio'] = cashflowTTM['Free Cashflow'] / self.incomeStatementTTM['Total Revenue']
-        cashflowTTM['Adjusted Free Cashflow Ratio'] = cashflowTTM['Adjusted Free Cashflow'] / self.incomeStatementTTM['Total Revenue']
         
         self.cashflowTTM = cashflowTTM
         
@@ -386,7 +372,10 @@ class stockDataPlots:
         
     #------------------------------
         
-    def updateLocalData(self, path):
+    def updateLocalData(self, 
+                        path: str, # Path to folder ending with '/' where folder of ticker is stored. Folders of tickers have to be named identical to the ticker.
+                        enforceUpdateOf: list = False, #
+                       ):
 
         pathStockData = path + self.ticker
 
@@ -398,6 +387,11 @@ class stockDataPlots:
                               'cashflow',
                               'cashflowQuarterly',
                               'cashflowTTM']
+        
+        if enforceUpdateOf is True:
+            enforceUpdateOf = financialDataNames
+        elif enforceUpdateOf is False:
+            enforceUpdateOf = []
 
         for name in financialDataNames:
             filePath = pathStockData + '/' + name + '.csv'
@@ -413,23 +407,30 @@ class stockDataPlots:
                 print(f"New Folder for ticker {self.ticker} has been created at {path}")
             
             if name + '.csv' in filesInFolder:
-                dataLocal = pd.read_csv(filePath, parse_dates = ['Date']).set_index('Date', drop = False)
-                dataLocal.index.name = False
-                
-                datesLocal = set(dataLocal['Date'])
-                datesNew = set(dataNew['Date'])
 
-                datesToAdd = datesNew.difference(datesLocal)
-                
-                if len(datesToAdd) > 0:
-                    dataToAdd = dataNew[dataNew['Date'] == datesToAdd]
-                    dataLocalUpdated = pd.concat([dataLocal, dataToAdd], axis = 0)
-                    ipdb.set_trace()
-                    dataLocalUpdated.sort_index(axis = 0, ascending = False)
-                    dataLocalUpdated.to_csv(filePath, index = False)
-
+                if name in enforceUpdateOf:
+                    dataNew.to_csv(filePath, index = False)
+                    print(f"{name} has been forced to be updated for {self.ticker}!")
+                    
                 else:
-                    print(f"{name} of {self.ticker} is already up to date!")
+                    dataLocal = pd.read_csv(filePath, parse_dates = ['Date']).set_index('Date', drop = False)
+                    dataLocal.index.name = False
+
+                    datesLocal = set(dataLocal['Date'])
+                    datesNew = set(dataNew['Date'])
+
+                    datesToAdd = datesNew.difference(datesLocal)
+
+                    if len(datesToAdd) > 0:
+                        dataToAdd = dataNew[dataNew['Date'] == datesToAdd]
+                        dataLocalUpdated = pd.concat([dataLocal, dataToAdd], axis = 0)
+
+                        dataLocalUpdated.sort_index(axis = 0, ascending = False)
+                        dataLocalUpdated.to_csv(filePath, index = False)
+                        print(f"{name} has been updated for {self.ticker} with data for {datesToAdd}")
+
+                    else:
+                        print(f"{name} of {self.ticker} is already up to date!")
                         
             else:
                 print(f"{name} doesn't exist locally for {self.ticker}! New csv-file is created at {pathStockData}!")
@@ -437,7 +438,9 @@ class stockDataPlots:
         
     #------------------------------
 
-    def getLocalData(self, path):
+    def getLocalData(self, 
+                     path: str, # Path to folder ending with '/' where folder of ticker is stored. Folders of tickers have to be named identical to the ticker.
+                    ):
         
         pathStockData = path + self.ticker
         
