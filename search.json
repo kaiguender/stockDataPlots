@@ -1,0 +1,37 @@
+[
+  {
+    "objectID": "executeCode.html",
+    "href": "executeCode.html",
+    "title": "stockDataPlots",
+    "section": "",
+    "text": "path = '/home/kagu/stockDataPlots/data/'\n\n\ntest = stockDataPlots(ticker = 'HFG.DE')\n\n\ntest.getCurrentYahooData()\n\n\n# test.updateLocalData(path = path)\n\nincomeStatement of HFG.DE is already up to date!\nincomeStatementQuarterly of HFG.DE is already up to date!\nincomeStatementTTM of HFG.DE is already up to date!\nbalanceSheet of HFG.DE is already up to date!\nbalanceSheetQuarterly of HFG.DE is already up to date!\ncashflow of HFG.DE is already up to date!\ncashflowQuarterly of HFG.DE is already up to date!\ncashflowTTM of HFG.DE is already up to date!"
+  },
+  {
+    "objectID": "yfinance_restructuredata.html#class-stockdataplots",
+    "href": "yfinance_restructuredata.html#class-stockdataplots",
+    "title": "Structure Financial Data",
+    "section": "Class StockDataPlots",
+    "text": "Class StockDataPlots\n\nsource\n\nstockDataPlots\n\n stockDataPlots (ticker:str)\n\nInitialize self. See help(type(self)) for accurate signature."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "stockDataPlots",
+    "section": "",
+    "text": "This file will become your README and also the index of your documentation."
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "stockDataPlots",
+    "section": "Install",
+    "text": "Install\npip install stockDataPlots"
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "stockDataPlots",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2"
+  }
+]
